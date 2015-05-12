@@ -1,0 +1,67 @@
+doctype html
+html
+  head
+
+    link( rel='stylesheet' href='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/css/bootstrap.min.css' )
+
+    script( src='https://code.jquery.com/jquery-2.1.4.js' )
+    script( src='https://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js' )
+
+    link( rel='stylesheet' href='/styles.css' )
+    script( src='/libs.js' )
+    script( src='/main.js' )
+
+    title Directional Field Estimation
+
+  body
+    nav.navbar.navbar-default.navbar-fixed-top
+      .container
+        .navbar-header
+          a.navbar-brand(href='/')
+            span.Text(data-key='title') Directional Field Estimation
+
+    .container
+
+      .row
+        //- left
+        .col-xs-8
+          .panel.panel-default
+            .panel-heading
+              span.Text(data-key='result') Result
+            .panel-body.canvas-container.CanvasContainer
+              .loading.Loading
+                .loading-content
+                  span.Text(data-key='loading') Calculating...
+              canvas.Canvas
+
+        //- right
+        .col-xs-4
+          //- config panel
+          .panel.panel-default
+            .panel-heading
+              span.Text(data-key='config') Config
+            .panel-body
+
+              //- .row.inputs-group
+              //-   .col-xs-6
+              //-     label.Text(data-key='width') Width
+              //-     input.form-control.OptionsInput(name='width' type='number' min='10' max='30' step='1' value='10')
+              //-   .col-xs-6
+              //-     label.Text(data-key='height') Height
+              //-     input.form-control.OptionsInput(name='height' type='number' min='10' max='30' step='1' value='10')
+
+              button.btn.btn-block.btn-default.BtnView(data-view='')
+                span.Text(data-key='source') Source image
+              button.btn.btn-block.btn-default.BtnView(data-view='angle')
+                span.Text(data-key='angle') Angles
+              button.btn.btn-block.btn-default.BtnView(data-view='length')
+                span.Text(data-key='length') Length
+              button.btn.btn-block.btn-default.BtnView(data-view='coh')
+                span.Text(data-key='coherency') Coherency
+
+          //- images panel
+          .panel.panel-default
+            .panel-heading
+              span.Text(data-key='images') Images
+            .panel-body
+              .row.overflow-auto.ImagesContainer

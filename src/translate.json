@@ -1,0 +1,28 @@
+{
+  "en": {
+    "title": "Directional Field Estimation",
+    "result": "Result",
+    "loading": "Calculating...",
+    "config": "Config",
+    "source": "Source image",
+    "angle": "Angles",
+    "length": "Length",
+    "coherency": "Coherency",
+    "images": "Images",
+    "width": "Width",
+    "height": "Height"
+  },
+  "ru": {
+    "title": "Тут расчитывают поле направлений, братишка.",
+    "result": "Видишь как круто считается?",
+    "loading": "Погоди, браток, вычисляем сейчас...",
+    "config": "Думаю тут все понятно",
+    "source": "Исходник",
+    "angle": "Углы",
+    "length": "Длина",
+    "coherency": "Когерентность",
+    "images": "Выбери понравившуюся",
+    "width": "Ширина",
+    "height": "Высота"
+  }
+}
