@@ -41,7 +41,7 @@ module.exports = (grunt) ->
         files: ['Gruntfile.coffee']
         tasks: ['build']
       coffee:
-        files: ['src/**/*.coffee']
+        files: ['src/**/*.coffee', 'src/**/*.json']
         tasks: ['browserify:compile']
       less:
         files: ['src/**/*.less']
