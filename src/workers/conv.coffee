@@ -26,9 +26,8 @@ new Producer self, (data) ->
 
           v = kernel[i][j]
           r += src[4 * (w * py + px) + 0] * v
-          # g += src[4 * (w * py + px) + 1] * v
-          # b += src[4 * (w * py + px) + 2] * v
-          # a += src[4 * (w * py + px) + 3] * v
+          g += src[4 * (w * py + px) + 1] * v
+          b += src[4 * (w * py + px) + 2] * v
           sum += v
 
       sum = 1 if sum <= 0
@@ -37,21 +36,17 @@ new Producer self, (data) ->
       r  = 0   if r < 0
       r  = 255 if r > 255
 
-      # g /= sum | 1
-      # g  = 0   if g < 0
-      # g  = 255 if g > 255
+      g /= sum | 1
+      g  = 0   if g < 0
+      g  = 255 if g > 255
 
-      # b /= sum | 1
-      # b  = 0   if b < 0
-      # b  = 255 if b > 255
-
-      # a /= sum | 1
-      # a  = 0   if a < 0
-      # a  = 255 if a > 255
+      b /= sum | 1
+      b  = 0   if b < 0
+      b  = 255 if b > 255
 
       out[4 * (w * y + x) + 0] = r
-      out[4 * (w * y + x) + 1] = r
-      out[4 * (w * y + x) + 2] = r
+      out[4 * (w * y + x) + 1] = g
+      out[4 * (w * y + x) + 2] = b
       out[4 * (w * y + x) + 3] = 255
 
   return imageData: new ImageData(out, w, h)

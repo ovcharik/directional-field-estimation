@@ -75,8 +75,14 @@ $window.on 'load', ->
   canvas.on 'loaded', -> $loading.hide()
 
   $button.on 'click', ->
+    $button.removeClass('active')
+    $(@).addClass('active')
     view = $(@).data('view')
     canvas.setView view
+    localStorage.view = view
+
+  view = localStorage.view || 'image'
+  $(".BtnView[data-view='#{view}']").trigger 'click'
 
   $inputs.on 'change', ->
     name = @name

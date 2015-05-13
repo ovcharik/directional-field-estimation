@@ -11,12 +11,13 @@ class Canvas extends Base
   @property 'offsetY', get: -> (@height - @imageHeight) / 2
 
   defaultOptions:
-    cellW: 10
-    cellH: 10
+    cellW: 15
+    cellH: 15
 
   workers:
-    conv : new Listener './conv.js'
-    calc : new Listener './calc.js'
+    sobel : new Listener './sobel.js'
+    calc  : new Listener './calc.js'
+    conv  : new Listener './conv.js'
 
   constructor: (@el, options = {}) ->
     @_calculatedData = null
@@ -75,13 +76,14 @@ class Canvas extends Base
       y = @offsetY + oy + rh
       @ctx.beginPath()
       @ctx.moveTo(x, y)
-      @ctx.lineTo(x + Math.cos(v) * rw, y + Math.sin(v) * rh)
+      @ctx.lineTo(x + Math.cos(v) * rw, y - Math.sin(v) * rh)
       @ctx.moveTo(x, y)
-      @ctx.lineTo(x + Math.cos(Math.PI + v) * rw, y + Math.sin(Math.PI + v) * rh)
+      @ctx.lineTo(x - Math.cos(v) * rw, y + Math.sin(v) * rh)
       @ctx.stroke()
 
   _drawLength: ->
     return unless @_calculatedData?.length
+    @_clear()
     data = @_calculatedData.length
     @_eachCells data, (ox, oy, w, h, v) =>
       c = 255 * v | 1
@@ -90,6 +92,7 @@ class Canvas extends Base
 
   _drawCoh: ->
     return unless @_calculatedData?.coh
+    @_clear()
     data = @_calculatedData.coh
     @_eachCells data, (ox, oy, w, h, v) =>
       c = 255 * v | 1
@@ -98,8 +101,8 @@ class Canvas extends Base
 
   _eachCells: (data, cb) ->
     return unless cb
-    h = @imageHeight / @options.cellH | 1
-    w = @imageWidth  / @options.cellW | 1
+    h = Math.floor(@imageHeight / @options.cellH)
+    w = Math.floor(@imageWidth  / @options.cellW)
     for y in [0 ... h]
       for x in [0 ... w]
         p = y * w + x
@@ -119,7 +122,7 @@ class Canvas extends Base
     return imageData
 
   _putPixels: (imageData) ->
-    @clear()
+    @_clear()
     ox = (@width - imageData.width)   / 2
     oy = (@height - imageData.height) / 2
     @ctx.putImageData imageData, ox, oy
@@ -127,26 +130,17 @@ class Canvas extends Base
 
   # workers
   _conv: (imageData, kernel, cb) ->
-    data =
-      kernel: kernel
-      imageData: imageData
-    @workers.conv.apply data, (error, data) => cb?(null, data)
+    @workers.conv.apply {kernel: kernel, imageData: imageData}, cb
     return
 
   _sobel: (imageData, cb) ->
-    async.parallel [
-      _.bind @_conv, @, imageData, [[-1,0,1],[-2,0,2],[-1,0,1]]
-      _.bind @_conv, @, imageData, [[-1,-2,-1],[0,0,0],[1,2,1]]
-    ], (error, data) ->
-      cb? null, 
-        x: data[0].imageData
-        y: data[1].imageData
+    @workers.sobel.apply {imageData: imageData}, cb
     return
 
   _calc: (imageData, cb) ->
     @_sobel imageData, (error, data) =>
       data.cellW = @options.cellW
       data.cellH = @options.cellH
-      @workers.calc.apply data, (error, data) => cb?(null, data)
+      @workers.calc.apply data, cb
 
 module.exports = Canvas
