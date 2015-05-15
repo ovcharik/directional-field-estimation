@@ -17,7 +17,6 @@ class Canvas extends Base
   workers:
     sobel : new Listener './sobel.js'
     calc  : new Listener './calc.js'
-    conv  : new Listener './conv.js'
 
   constructor: (@el, options = {}) ->
     @_calculatedData = null
@@ -67,9 +66,11 @@ class Canvas extends Base
   _drawAngles: ->
     return unless @_calculatedData?.angle
     data = @_calculatedData.angle
+    l = @_calculatedData.length
     @ctx.lineWidth = 1
     @ctx.strokeStyle = "red"
-    @_eachCells data, (ox, oy, w, h, v) =>
+    @_eachCells data, (ox, oy, w, h, v, i) =>
+      return if l[i] < 0.01
       rw = w / 2
       rh = h / 2
       x = @offsetX + ox + rw
@@ -111,7 +112,8 @@ class Canvas extends Base
           y * @options.cellH,
           @options.cellW,
           @options.cellH,
-          data[p]
+          data[p],
+          p
         )
 
 

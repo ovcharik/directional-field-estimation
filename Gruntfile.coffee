@@ -19,7 +19,6 @@ module.exports = (grunt) ->
           'main.js': ['src/main.coffee']
 
           # workers
-          'conv.js' : ['src/workers/conv.coffee' ]
           'calc.js' : ['src/workers/calc.coffee' ]
           'sobel.js': ['src/workers/sobel.coffee']
 

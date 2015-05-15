@@ -1,11 +1,9 @@
 importScripts './libs.js'
 
-calcAngle = (x, y) ->
-  a  = (-0.5 * Math.atan2(x, y)) % (2 * Math.PI) + Math.PI / 2
-  # a += Math.PI if a < 0
-  a
-
 new Producer self, (data) ->
+
+  min = (v1, v2) -> if (v1 < v2) then v1 else v2
+  max = (v1, v2) -> if (v1 > v2) then v1 else v2
 
   sobelx = data.x
   sobely = data.y
@@ -13,15 +11,18 @@ new Producer self, (data) ->
   w = sobelx.width
   h = sobelx.height
 
+  dx = sobelx.data
+  dy = sobely.data
+
   cellW = data.cellW
   cellH = data.cellH
 
   rW = Math.floor(w / cellW)
   rH = Math.floor(h / cellH)
 
-  length = new Array(rW * rH)
-  angle  = new Array(rW * rH)
-  coh    = new Array(rW * rH)
+  length = new Float32Array(rW * rH)
+  angle  = new Float32Array(rW * rH)
+  coh    = new Float32Array(rW * rH)
 
   minL = Infinity
   maxL = -Infinity
@@ -36,12 +37,12 @@ new Producer self, (data) ->
 
       for i in [ y * cellH ... (y + 1) * cellH ]
         for j in [ x * cellW ... (x + 1) * cellW ]
-          py = _.max ([0, _.min([h-1, i])])
-          px = _.max ([0, _.min([w-1, j])])
+          py = max(0, min(h-1, i))
+          px = max(0, min(w-1, j))
           pp = py * w + px
 
-          gx = sobelx.data[pp]
-          gy = sobely.data[pp]
+          gx = dx[pp]
+          gy = dy[pp]
 
           gxx += gx * gx
           gyy += gy * gy
@@ -49,7 +50,7 @@ new Producer self, (data) ->
           gsx += gx * gx - gy * gy
           gsy += 2 * gx * gy
 
-      angle[rp] = calcAngle(gsy, gsx)
+      angle[rp] = (-0.5 * Math.atan2(gsy, gsx)) % (2 * Math.PI) + Math.PI / 2
 
       length[rp] = Math.sqrt(gsx * gsx + gsy * gsy)
       minL  = length[rp] if length[rp] < minL
@@ -68,7 +69,7 @@ new Producer self, (data) ->
   maxC -= minC
   coh[i] = (v - minC) / maxC for v, i in coh
 
-  return {
+  {
     length: length
     angle: angle
     coh: coh
