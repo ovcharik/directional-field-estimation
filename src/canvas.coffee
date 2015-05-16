@@ -11,8 +11,7 @@ class Canvas extends Base
   @property 'offsetY', get: -> (@height - @imageHeight) / 2
 
   defaultOptions:
-    cellW: 15
-    cellH: 15
+    cell: 15
 
   workers:
     sobel : new Listener './sobel.js'
@@ -28,7 +27,7 @@ class Canvas extends Base
     @updateOptions options
 
   updateOptions: (options = {}) ->
-    _.extend @options, options, @defaultOptions
+    _.extend @options, @defaultOptions, options
     @loadImage(@image)
 
   loadImage: (@image) ->
@@ -69,49 +68,49 @@ class Canvas extends Base
     l = @_calculatedData.length
     @ctx.lineWidth = 1
     @ctx.strokeStyle = "red"
-    @_eachCells data, (ox, oy, w, h, v, i) =>
+    @_eachCells data, (ox, oy, size, v, i) =>
       return if l[i] < 0.01
-      rw = w / 2
-      rh = h / 2
-      x = @offsetX + ox + rw
-      y = @offsetY + oy + rh
+      half = size / 2
+      x = @offsetX + ox + half
+      y = @offsetY + oy + half
       @ctx.beginPath()
       @ctx.moveTo(x, y)
-      @ctx.lineTo(x + Math.cos(v) * rw, y - Math.sin(v) * rh)
+      @ctx.lineTo(x + Math.cos(v) * half, y - Math.sin(v) * half)
       @ctx.moveTo(x, y)
-      @ctx.lineTo(x - Math.cos(v) * rw, y + Math.sin(v) * rh)
+      @ctx.lineTo(x - Math.cos(v) * half, y + Math.sin(v) * half)
       @ctx.stroke()
 
   _drawLength: ->
     return unless @_calculatedData?.length
     @_clear()
     data = @_calculatedData.length
-    @_eachCells data, (ox, oy, w, h, v) =>
-      c = 255 * v | 1
+    @_eachCells data, (ox, oy, size, v) =>
+      c = Math.floor(255 * v)
       @ctx.fillStyle = "rgb(#{c},#{c},#{c})"
-      @ctx.fillRect @offsetX + ox, @offsetY + oy, w + 1, h + 1
+      @ctx.fillRect @offsetX + ox, @offsetY + oy, size + 1, size + 1
 
   _drawCoh: ->
     return unless @_calculatedData?.coh
     @_clear()
     data = @_calculatedData.coh
-    @_eachCells data, (ox, oy, w, h, v) =>
-      c = 255 * v | 1
+    l = @_calculatedData.length
+    @_eachCells data, (ox, oy, size, v, i) =>
+      return if l[i] < 0.01
+      c = Math.floor(255 * v)
       @ctx.fillStyle = "rgb(#{c},#{c},#{c})"
-      @ctx.fillRect @offsetX + ox, @offsetY + oy, w + 1, h + 1
+      @ctx.fillRect @offsetX + ox, @offsetY + oy, size + 1, size + 1
 
   _eachCells: (data, cb) ->
     return unless cb
-    h = Math.floor(@imageHeight / @options.cellH)
-    w = Math.floor(@imageWidth  / @options.cellW)
+    h = Math.floor(@imageHeight / @options.cell)
+    w = Math.floor(@imageWidth  / @options.cell)
     for y in [0 ... h]
       for x in [0 ... w]
         p = y * w + x
         cb?(
-          x * @options.cellW,
-          y * @options.cellH,
-          @options.cellW,
-          @options.cellH,
+          x * @options.cell,
+          y * @options.cell,
+          @options.cell,
           data[p],
           p
         )
@@ -141,8 +140,7 @@ class Canvas extends Base
 
   _calc: (imageData, cb) ->
     @_sobel imageData, (error, data) =>
-      data.cellW = @options.cellW
-      data.cellH = @options.cellH
+      data.cell = @options.cell
       @workers.calc.apply data, cb
 
 module.exports = Canvas

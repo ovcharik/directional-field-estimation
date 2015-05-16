@@ -14,11 +14,10 @@ new Producer self, (data) ->
   dx = sobelx.data
   dy = sobely.data
 
-  cellW = data.cellW
-  cellH = data.cellH
+  cell = data.cell
 
-  rW = Math.floor(w / cellW)
-  rH = Math.floor(h / cellH)
+  rW = Math.floor(w / cell)
+  rH = Math.floor(h / cell)
 
   length = new Float32Array(rW * rH)
   angle  = new Float32Array(rW * rH)
@@ -35,12 +34,9 @@ new Producer self, (data) ->
       rp = y * rW + x
       [gxx, gyy, gxy, gsx, gsy] = [0, 0, 0, 0, 0]
 
-      for i in [ y * cellH ... (y + 1) * cellH ]
-        for j in [ x * cellW ... (x + 1) * cellW ]
-          py = max(0, min(h-1, i))
-          px = max(0, min(w-1, j))
-          pp = py * w + px
-
+      for i in [ y * cell ... (y + 1) * cell ]
+        for j in [ x * cell ... (x + 1) * cell ]
+          pp = i * w + j
           gx = dx[pp]
           gy = dy[pp]
 
@@ -53,13 +49,13 @@ new Producer self, (data) ->
       angle[rp] = (-0.5 * Math.atan2(gsy, gsx)) % (2 * Math.PI) + Math.PI / 2
 
       length[rp] = Math.sqrt(gsx * gsx + gsy * gsy)
-      minL  = length[rp] if length[rp] < minL
-      maxL  = length[rp] if length[rp] > maxL
+      minL = min(minL, length[rp])
+      maxL = max(maxL, length[rp])
 
       diff = gxx - gyy
       coh[rp] = Math.sqrt( diff * diff + 4 * gxy * gxy ) / (gxx + gyy)
-      minC  = coh[rp] if coh[rp] < minC
-      maxC  = coh[rp] if coh[rp] > maxC
+      minC = min(minC, coh[rp])
+      maxC = max(maxC, coh[rp])
 
   # length normalization
   maxL -= minL

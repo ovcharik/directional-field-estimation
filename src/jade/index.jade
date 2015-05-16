@@ -42,13 +42,11 @@ html
               span.Text(data-key='config') Config
             .panel-body
 
-              //- .row.inputs-group
-              //-   .col-xs-6
-              //-     label.Text(data-key='width') Width
-              //-     input.form-control.OptionsInput(name='width' type='number' min='10' max='30' step='1' value='10')
-              //-   .col-xs-6
-              //-     label.Text(data-key='height') Height
-              //-     input.form-control.OptionsInput(name='height' type='number' min='10' max='30' step='1' value='10')
+              .form-horizontal
+                .form-group
+                  label.control-label.col-xs-6.Text(data-key='cellSize') Cell size
+                  .col-xs-6
+                    input.form-control.OptionsInput(name='cell' type='number' min='10' max='30' step='1' value='15')
 
               button.btn.btn-block.btn-default.BtnView(data-view='image')
                 span.Text(data-key='source') Source image

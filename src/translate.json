@@ -9,8 +9,7 @@
     "length": "Length",
     "coherency": "Coherency",
     "images": "Images",
-    "width": "Width",
-    "height": "Height"
+    "cellSize": "Cell size",
   },
   "ru": {
     "title": "Тут расчитывают поле направлений, братишка.",
@@ -22,7 +21,6 @@
     "length": "Длина",
     "coherency": "Когерентность",
     "images": "Выбери понравившуюся",
-    "width": "Ширина",
-    "height": "Высота"
+    "cellSize": "Размер ячейки",
   }
 }

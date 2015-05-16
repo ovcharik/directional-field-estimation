@@ -70,7 +70,15 @@ $window.on 'load', ->
   $button = $('.BtnView')
   $inputs = $('.OptionsInput')
 
-  canvas = new Canvas $canvas[0]
+  try
+    options = JSON.parse localStorage.options
+  catch
+    options = {}
+
+  for key, value of options
+    $(".OptionsInput[name=#{key}]").val value
+
+  canvas = new Canvas $canvas[0], options
   canvas.on 'loading', -> $loading.show()
   canvas.on 'loaded', -> $loading.hide()
 
@@ -87,9 +95,10 @@ $window.on 'load', ->
   $inputs.on 'change', ->
     name = @name
     value = Number @value
-    o = {}
-    o[name] = value
-    canvas.updateOptions o
+    options = {}
+    options[name] = value
+    localStorage.options = JSON.stringify(options)
+    canvas.updateOptions options
 
   $window.on 'keydown', (event) ->
     if event.altKey and event.keyCode == 84
